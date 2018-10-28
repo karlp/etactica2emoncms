@@ -17,6 +17,7 @@ def parseargs():
     parser.add_argument("--mhost", help="MQTT Host for listening to messages", default="localhost")
     parser.add_argument("--emon", help="base emoncms url for posting", default="https://emon.example.org/input/post")
     parser.add_argument("--key", help="EmonCMS API key for posting data", required=True)
+    parser.add_argument("--verbose", "-v", help="log level, lower is more", type=int, choices=range(1, 5), default=2)
 
     return parser.parse_args()
 
@@ -56,7 +57,7 @@ def on_message_real(client, udata, msg):
 
     # curl --data "node=1&data={power1:100,power2:200,power3:300}&apikey=8bc8733d80dd6b2272ba99f80e3d5be4" "https://emon.beeroclock.net/input/post"
     topost = dict(node=deviceid, fulljson=json.dumps(values), apikey=opts.key)
-    logging.info("Posting data: %s", topost)
+    logging.info("Posting data for device %s: %d values", deviceid, len(values.keys()))
     r = s.post(opts.emon, topost)
     if r.status_code != 200:
         logging.warning("EmonCMS API failure? %d %s", r.status_code, r.text())
@@ -87,5 +88,6 @@ def main(opts):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    main(parseargs())
+    args = parseargs()
+    logging.basicConfig(level=args.verbose * 10)
+    main(args)
