@@ -34,11 +34,15 @@ def on_message_real(client, udata, msg):
     s = udata.get("s")
     opts = udata.get("opts")
     js = json.loads(msg.payload.decode("utf-8"))
-    deviceid = js.get("deviceid")
+    hwc = js.get("hwc")
+    if not hwc:
+        logging.warning("No Hardware Config block?! Is this an eTactica device?")
+        return
+    deviceid = hwc.get("deviceid")
     if not deviceid:
         logging.warning("No deviceid in message?! who made this?!")
         return
-    if js.get("error"):
+    if hwc.get("error"):
         logging.debug("Ignoring failed reading on %s", deviceid)
         return
     senml = js.get("senml")
