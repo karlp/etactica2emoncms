@@ -1,0 +1,14 @@
+[Unit]
+Description=eTactica to EmonCMS datastream republisher
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=/home/karlp/src/etactica2emoncms
+# Edit this to suit!
+ExecStart=/home/karlp/src/etactica2emoncms/.env3/bin/python etactica2emoncms.py --mhost 192.168.3.89 --emon "https://emon.example.org/input/post" --key yourapikey
+
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
