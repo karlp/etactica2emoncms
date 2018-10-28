@@ -32,7 +32,7 @@ def on_message(client, udata, msg):
 def on_message_real(client, udata, msg):
     s = udata.get("s")
     opts = udata.get("opts")
-    js = json.loads(msg.payload)
+    js = json.loads(msg.payload.decode("utf-8"))
     deviceid = js.get("deviceid")
     if not deviceid:
         logging.warning("No deviceid in message?! who made this?!")
